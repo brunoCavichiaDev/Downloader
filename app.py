@@ -5,17 +5,11 @@ from pathlib import Path
 
 app = Flask(__name__)
 
-FFMPEG_PATH = os.path.join(os.path.dirname(__file__), 'ffmpeg', 'ffmpeg.exe')
-
-# Obtener la ruta de la carpeta de descargas del sistema
+# Obtener la ruta de la carpeta de descargas
 def obtener_carpeta_descargas():
-    # Usar pathlib para obtener la ruta de la carpeta de descargas del sistema
-    if os.name == 'nt':  # Para Windows
-        carpeta_descargas = str(Path(os.getenv('USERPROFILE')) / 'Downloads')
-    else:
-        # Para sistemas basados en UNIX (como Linux o macOS)
-        carpeta_descargas = str(Path.home() / 'Downloads')
-    
+    carpeta_descargas = os.path.join(os.path.dirname(__file__), 'downloads')
+    if not os.path.exists(carpeta_descargas):
+        os.makedirs(carpeta_descargas)
     return carpeta_descargas
 
 def descargar_audio(url):
@@ -29,7 +23,6 @@ def descargar_audio(url):
                 'preferredcodec': 'mp3',
                 'preferredquality': '192',
             }],
-            'ffmpeg_location': FFMPEG_PATH,
         }
 
         with yt_dlp.YoutubeDL(opciones) as ydl:
